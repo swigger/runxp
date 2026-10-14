@@ -41,8 +41,7 @@ Remove-Item -LiteralPath $ResolvedStage # Empty, owned staging directory only.
 Copy-Item -LiteralPath $Cli -Destination (Join-Path $Destination 'bin')
 if ($IncludeToolsIso) { Copy-Item -LiteralPath (Join-Path $ProjectRoot 'guest-tools.iso') -Destination $Destination }
 Copy-Item -LiteralPath (Join-Path $ProjectRoot 'docs\使用说明.txt') -Destination $Destination
-New-Item -ItemType Directory -Force -Path (Join-Path $Destination 'bin\docs'),(Join-Path $Destination 'bin\licenses') | Out-Null
-foreach ($Name in @('architecture.md','snapshots.md','minimal-runtime.md','compatibility-0.3.md')) { Copy-Item -LiteralPath (Join-Path $ProjectRoot "docs\$Name") -Destination (Join-Path $Destination 'bin\docs') }
+New-Item -ItemType Directory -Force -Path (Join-Path $Destination 'bin\licenses') | Out-Null
 Copy-Item -LiteralPath (Join-Path $ProjectRoot 'third_party\nlohmann\LICENSE.MIT') -Destination (Join-Path $Destination 'bin\licenses\nlohmann-json.txt')
 $NugetRoot = if ($env:NUGET_PACKAGES) { $env:NUGET_PACKAGES } else { Join-Path $env:USERPROFILE '.nuget\packages' }
 $WinUiLicense = Join-Path $NugetRoot 'microsoft.windowsappsdk.winui\1.8.260803003\license.txt'
