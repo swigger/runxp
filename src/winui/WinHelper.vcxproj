@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64"><Configuration>Debug</Configuration><Platform>x64</Platform></ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64"><Configuration>Release</Configuration><Platform>x64</Platform></ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{E58C44D0-097C-4FB0-B61A-18DF81FA08B2}</ProjectGuid>
+    <RootNamespace>QemuHelper</RootNamespace>
+    <ProjectName>WinHelper</ProjectName>
+    <CppWinRTOptimized>true</CppWinRTOptimized>
+    <CppWinRTRootNamespaceAutoMerge>true</CppWinRTRootNamespaceAutoMerge>
+    <GeneratedFilesDir>$(MSBuildThisFileDirectory)obj\$(Configuration)\Generated Files\</GeneratedFilesDir>
+    <MinimalCoreWin>true</MinimalCoreWin>
+    <DefaultLanguage>zh-CN</DefaultLanguage>
+    <AppContainerApplication>false</AppContainerApplication>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformMinVersion>10.0.19041.0</WindowsTargetPlatformMinVersion>
+    <UseWinUI>true</UseWinUI>
+    <EnableMsixTooling>true</EnableMsixTooling>
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <WindowsAppSdkBootstrapInitialize>false</WindowsAppSdkBootstrapInitialize>
+    <AppxPackage>false</AppxPackage>
+    <WindowsPackageType>None</WindowsPackageType>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    <NuGetTargetMoniker>native,Version=v0.0</NuGetTargetMoniker>
+    <NuGetTargetPlatformIdentifier>Windows</NuGetTargetPlatformIdentifier>
+    <NuGetTargetPlatformVersion>$(WindowsTargetPlatformVersion)</NuGetTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v145</PlatformToolset>
+    <PlatformToolset Condition="'$(VisualStudioVersion)'=='17.0'">v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <DesktopCompatible>true</DesktopCompatible>
+    <UseDebugLibraries Condition="'$(Configuration)'=='Debug'">true</UseDebugLibraries>
+    <UseDebugLibraries Condition="'$(Configuration)'=='Release'">false</UseDebugLibraries>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <PropertyGroup>
+    <OutputType>winexe</OutputType>
+    <TargetName>qemu-3dfx-winhelper-ui</TargetName>
+    <OutDir>$(MSBuildThisFileDirectory)..\..\build\winui\$(Configuration)\</OutDir>
+    <IntDir>$(MSBuildThisFileDirectory)obj\$(Configuration)\</IntDir>
+    <AppxPriInitialPath></AppxPriInitialPath>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.WindowsAppSDK.WinUI" Version="1.8.260803003" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3179.45" />
+    <PackageReference Include="Microsoft.Windows.CppWinRT" Version="2.0.250303.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Web.WebView2.Core">
+      <HintPath>$(NuGetPackageRoot)microsoft.web.webview2\1.0.3179.45\lib\Microsoft.Web.WebView2.Core.winmd</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader><PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <WarningLevel>Level4</WarningLevel><LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalOptions>/utf-8 /bigobj %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(IntDir);$(ProjectDir)..;$(ProjectDir)..\..\third_party;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NOMINMAX;WIN32_LEAN_AND_MEAN;UNICODE;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ExceptionHandling>Sync</ExceptionHandling>
+    </ClCompile>
+    <Link><SubSystem>Windows</SubSystem><AdditionalDependencies>ws2_32.lib;bcrypt.lib;shell32.lib;comdlg32.lib;%(AdditionalDependencies)</AdditionalDependencies></Link>
+    <ResourceCompile><AdditionalIncludeDirectories>$(ProjectDir)..\assets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories></ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
+    <ClCompile><Optimization>MaxSpeed</Optimization><FunctionLevelLinking>true</FunctionLevelLinking></ClCompile>
+    <Link><EnableCOMDATFolding>true</EnableCOMDATFolding><OptimizeReferences>true</OptimizeReferences></Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Manifest Include="app.manifest" />
+    <ResourceCompile Include="..\assets\WinHelper.rc" />
+    <ApplicationDefinition Include="App.xaml" />
+    <Page Include="MainWindow.xaml" />
+    <Midl Include="Project.idl" />
+    <ClInclude Include="pch.h" /><ClInclude Include="App.xaml.h" /><ClInclude Include="MainWindow.xaml.h" />
+    <ClCompile Include="pch.cpp"><PrecompiledHeader>Create</PrecompiledHeader></ClCompile>
+    <ClCompile Include="App.xaml.cpp" /><ClCompile Include="MainWindow.xaml.cpp" />
+    <ClCompile Include="XamlGlue.cpp" />
+    <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
+    <ClCompile Include="..\core\Types.cpp"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
+    <ClCompile Include="..\core\Qmp.cpp"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
+    <ClCompile Include="..\core\Manager.cpp"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
+    <ClCompile Include="..\platform\WindowsHost.cpp"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <!-- Native desktop project: explicitly schedule XAML passes without the UWP workload. -->
+  <Target Name="CompileDesktopXaml" BeforeTargets="ClCompile" DependsOnTargets="ResolveReferences;MarkupCompilePass1;MarkupCompilePass2" />
+</Project>

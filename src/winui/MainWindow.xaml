@@ -1,0 +1,100 @@
+<Window x:Class="QemuHelper.MainWindow"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ Title="QEMU 3dfx · WinHelper">
+ <ContentControl x:Name="RootControl" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+ <Grid x:Name="RootGrid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" RequestedTheme="Light">
+  <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+  <Grid Padding="28,20,28,18" ColumnSpacing="16">
+   <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+   <Border Width="48" Height="48" Background="#165DDE" CornerRadius="12"><TextBlock Text="XP" FontSize="22" FontWeight="SemiBold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+   <StackPanel Grid.Column="1" Spacing="2"><TextBlock Text="QEMU 3dfx" FontSize="24" FontWeight="SemiBold"/><TextBlock Text="WINHELPER  /  让旧系统在新机器上继续运行" Foreground="#687386" FontSize="12"/></StackPanel>
+   <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+    <Button Content="打开工作区" Click="OnOpenWorkspace"/>
+    <Button Content="刷新" Click="OnRefresh"/>
+   </StackPanel>
+  </Grid>
+  <Grid Grid.Row="1" ColumnSpacing="24" Padding="24,0,24,16">
+   <Grid.ColumnDefinitions><ColumnDefinition Width="250"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+   <Border Background="#F1F4F8" CornerRadius="12" Padding="14">
+    <Grid RowSpacing="12"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+     <TextBlock Text="我的虚拟机" FontSize="16" FontWeight="SemiBold" Margin="4,2,0,0"/>
+     <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="8"><Button Content="＋ 新建" Click="OnCreate" Style="{StaticResource AccentButtonStyle}"/><Button Content="导入磁盘" Click="OnImport"/></StackPanel>
+     <ListView x:Name="VmList" Grid.Row="2" SelectionMode="Single" SelectionChanged="OnSelection" Background="Transparent"/>
+     <TextBlock Grid.Row="3" Text="配置跟随工作区保存。&#x0a;迁移时复制整个工具目录即可。" Foreground="#687386" FontSize="12" TextWrapping="Wrap" Margin="4,0,0,0"/>
+    </Grid>
+   </Border>
+   <Grid Grid.Column="1">
+    <StackPanel x:Name="EmptyPanel" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16" MaxWidth="470">
+     <FontIcon Glyph="&#xE7F4;" FontSize="56" Foreground="#165DDE"/>
+     <TextBlock Text="准备好，重返熟悉的桌面" FontSize="26" FontWeight="SemiBold" TextAlignment="Center"/>
+     <TextBlock Text="新建一台 Windows XP 虚拟机，选择安装光盘即可开始。也可以导入已有磁盘，保留原文件并创建独立副本。" TextWrapping="Wrap" TextAlignment="Center" Foreground="#687386"/>
+     <Button Content="新建虚拟机" Click="OnCreate" HorizontalAlignment="Center" Style="{StaticResource AccentButtonStyle}"/>
+    </StackPanel>
+    <Grid x:Name="DetailsPanel" Visibility="Collapsed" RowSpacing="8">
+     <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+     <Grid Margin="0,8,0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+      <StackPanel Spacing="3"><TextBlock x:Name="VmTitle" FontSize="28" FontWeight="SemiBold"/><TextBlock x:Name="VmSubtitle" Foreground="#687386" FontSize="12"/></StackPanel>
+      <Border Grid.Column="1" Background="#ECF2FC" CornerRadius="14" Padding="14,6" VerticalAlignment="Center"><TextBlock x:Name="StateText" Foreground="#165DDE" FontWeight="SemiBold"/></Border>
+     </Grid>
+     <Pivot Grid.Row="1">
+      <PivotItem Header="配置与启动">
+       <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Spacing="18" Padding="0,8,12,16">
+        <StackPanel x:Name="HardwarePanel" Spacing="14">
+         <TextBox x:Name="NameBox" Header="名称" MaxLength="60"/>
+         <Grid ColumnSpacing="16"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+          <NumberBox x:Name="MemoryBox" Header="内存 / MiB" Minimum="128" Maximum="3584" SmallChange="128" SpinButtonPlacementMode="Compact"/>
+          <ComboBox x:Name="CpuBox" Grid.Column="1" Header="处理器" HorizontalAlignment="Stretch"><x:String>1 核</x:String><x:String>2 核</x:String><x:String>3 核</x:String><x:String>4 核</x:String></ComboBox>
+          <ComboBox x:Name="AccelBox" Grid.Column="2" Header="加速方式" HorizontalAlignment="Stretch"><x:String>TCG · 兼容优先</x:String><x:String>WHPX · 需系统支持</x:String></ComboBox>
+         </Grid>
+         <StackPanel Orientation="Horizontal" Spacing="22"><ToggleSwitch x:Name="NetworkToggle" Header="NAT 网络"/><ToggleSwitch x:Name="SoundToggle" Header="AC97 声卡"/><ToggleSwitch x:Name="UsbToggle" Header="鼠标" OnContent="USB" OffContent="PS/2" Toggled="OnMouseChanged" ToolTipService.ToolTip="运行中可随时切换 USB / PS/2 鼠标"/></StackPanel>
+         <TextBlock Text="USB 鼠标可自由移出窗口；PS/2 鼠标按 Ctrl + Alt + G 释放。运行中也可切换。" Foreground="#687386" FontSize="12" TextWrapping="Wrap"/>
+         <StackPanel Orientation="Horizontal" Spacing="10"><Button x:Name="SaveButton" Content="保存配置" Click="OnSave"/><TextBlock Text="固定使用 i440FX、IDE 硬盘和 Cirrus 显卡" VerticalAlignment="Center" Foreground="#687386" FontSize="12"/></StackPanel>
+        </StackPanel>
+        <Border Height="1" Background="#E4E8F0"/>
+        <StackPanel Spacing="10">
+         <TextBlock Text="光驱与启动" FontSize="18" FontWeight="SemiBold"/>
+         <Grid ColumnSpacing="8"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+          <TextBox x:Name="IsoBox" PlaceholderText="选择 ISO；留空表示空光驱"/>
+          <Button Grid.Column="1" Content="选择 ISO" Click="OnBrowseIso"/>
+          <Button Grid.Column="2" Content="工具盘" Click="OnToolsIso"/>
+         </Grid>
+         <StackPanel Orientation="Horizontal" Spacing="8"><Button Content="挂载 / 保存光盘" Click="OnMountIso"/><Button Content="弹出光盘" Click="OnEjectIso"/><TextBlock Text="运行中也可以换盘" Foreground="#687386" VerticalAlignment="Center" FontSize="12"/></StackPanel>
+         <CheckBox x:Name="BootCdCheck" Content="仅本次优先从光盘启动（安装系统）"/>
+         <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,6,0,0">
+          <Button x:Name="StartButton" Content="▶  启动虚拟机" Style="{StaticResource AccentButtonStyle}" Click="OnStart"/>
+          <Button x:Name="ShutdownButton" Content="正常关机" Click="OnShutdown"/>
+          <Button x:Name="StopButton" Content="强制断电…" Click="OnStop"/>
+         </StackPanel>
+         <TextBlock Text="关闭管理器后，虚拟机会继续运行。Ctrl + Alt + G 释放鼠标。" Foreground="#687386" FontSize="12" TextWrapping="Wrap"/>
+        </StackPanel>
+       </StackPanel></ScrollViewer>
+      </PivotItem>
+      <PivotItem Header="关机快照">
+       <Grid RowSpacing="14" Padding="0,12,12,16"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+        <InfoBar IsOpen="True" IsClosable="False" Severity="Informational" Title="只保存磁盘状态" Message="请先在客体内正常关机。快照不保存内存、硬件设置或 ISO。恢复前会自动保留一个当前状态快照。"/>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="8"><Button Content="刷新快照" Click="OnLoadSnapshots"/><Button x:Name="CreateSnapshotButton" Content="＋ 创建快照" Click="OnCreateSnapshot"/></StackPanel>
+        <ListView x:Name="SnapshotList" Grid.Row="2" SelectionMode="Single"/>
+        <StackPanel Grid.Row="3" Spacing="12"><StackPanel Orientation="Horizontal" Spacing="8"><Button Content="恢复所选快照…" Click="OnRestoreSnapshot"/><Button Content="删除所选快照…" Click="OnDeleteSnapshot"/></StackPanel><TextBlock Text="内部快照与硬盘放在同一文件中，不是独立备份。重要数据请使用“导出当前磁盘”。" TextWrapping="Wrap" Foreground="#687386" FontSize="12"/></StackPanel>
+       </Grid>
+      </PivotItem>
+      <PivotItem Header="文件与备份">
+       <StackPanel Spacing="18" Padding="0,16,12,16">
+        <TextBlock Text="虚拟机文件" FontSize="18" FontWeight="SemiBold"/><TextBox x:Name="DiskPathBox" Header="独立 qcow2 硬盘" IsReadOnly="True" TextWrapping="Wrap"/>
+        <StackPanel Orientation="Horizontal" Spacing="8"><Button Content="打开虚拟机目录" Click="OnOpenMachine"/><Button Content="查看运行日志" Click="OnOpenLogs"/></StackPanel>
+        <Button Content="导出当前磁盘…" Click="OnExport"/><TextBlock Text="关机后导出一份独立 qcow2 文件，包含当前磁盘内容，不包含内部快照历史。可通过导入磁盘创建新虚拟机。" TextWrapping="Wrap" Foreground="#687386"/>
+        <Border Height="1" Background="#E4E8F0"/>
+        <Button Content="从列表移除…" Click="OnRemove"/><TextBlock Text="只停用配置记录，保留磁盘与快照文件。" Foreground="#687386"/>
+       </StackPanel>
+      </PivotItem>
+     </Pivot>
+    </Grid>
+   </Grid>
+  </Grid>
+  <StackPanel Grid.Row="2" Margin="24,0,24,16" Spacing="8">
+   <ProgressBar x:Name="BusyProgress" IsIndeterminate="True" Visibility="Collapsed"/>
+   <InfoBar x:Name="StatusBar" IsOpen="True" IsClosable="True" Severity="Informational" Title="就绪" Message="选择或新建一台虚拟机即可开始。"/>
+  </StackPanel>
+ </Grid>
+ </ContentControl>
+</Window>

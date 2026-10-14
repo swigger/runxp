@@ -1,0 +1,50 @@
+# Local tools, restored packages, and build output.
+/.tools/
+/packages/
+/build/
+/out/
+/.vs/
+/CMakeUserPresets.json
+/src/winui/obj/
+/src/winui/Generated Files/
+
+# Portable releases (the source runtime-binary directory is tracked).
+/dist/
+/dist*.zip
+
+# Local workspaces, guest disks, snapshots, and logs.
+/machines/
+/logs/
+/workspace.json
+/.workspace.lock
+
+# Visual Studio per-user state and compiler intermediates.
+*.user
+*.suo
+*.VC.db
+*.VC.opendb
+*.pdb
+*.ilk
+*.obj
+*.pch
+*.idb
+*.ipch
+*.tlog
+*.iso
+
+# Python caches and generated smoke-test screenshots.
+__pycache__/
+*.py[cod]
+.pytest_cache/
+/docs/runtime-smoke*.png
+
+# Machine-local TLS credentials and private installation notes.
+/support/*.key
+/support/ca.pem
+/support/*.pfx
+/support/*.p12
+/support/install-note.txt
+/reference/
+
+# Keep runtime-binary/, guest-tools.iso, support/*.iso and support EXE/DLLs.
+# Do not add blanket ignores for bin/, *.exe, *.dll, *.bin, or *.iso.

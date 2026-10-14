@@ -1,0 +1,10 @@
+# Store upstream runtime files byte-for-byte in ordinary Git (no LFS).
+runtime-binary/** binary
+*.iso binary
+*.exe binary
+*.dll binary
+*.bin binary
+*.rom binary
+*.ico binary
+*.png binary
+*.bmp binary
